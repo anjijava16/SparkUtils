@@ -1,0 +1,383 @@
+
+
+spark-shell --master yarn \
+--conf spark.ui.port=12345
+
+===================================
+
+hadoop fs -ls /public/retail_db
+
+hadoop fs -du -s -h /public/retail_db
+
+===================================
+   
+
+
+spark-shell --help //Spark Help Command
+
+
+--executor-memory
+--num-execuors
+
+
+Launch the session default session it is  create 2 executors
+
+How to increase num-executors?
+default executors:  2
+this 2 will process the data
+
+Note: Check executors in UI
+
+hadoop fs -du -s -h /public/retail_db
+
+====================================================
+export SPARK_MAJOR_VERSION=2
+spark-shell --master yarn \
+  --conf spark.ui.port=10045 \
+  --num-executors 1 \
+  --executor-memory 512M \
+  --conf spark.shuffle.consolidateFiles=true -i wordCount.scala \
+  --conf spark.driver.args="10 20" > input1.log 2>&1
+
+export SPARK_MAJOR_VERSION=2
+spark-shell --master yarn \
+  --conf spark.ui.port=12245 \
+  --num-executors 6 \
+  --executor-memory 6GB
+
+ ==========================================
+
+ How to get this default exectors info 
+
+ cd /etc/spark/conf/
+ vi spark-defaults.conf
+
+
+ vi spark-env.sh
+
+
+//Initialize programmatically
+import org.apache.spark.{SparkConf,SparkContext}
+val conf=new SparkConf().setAppName("DailExampel Revenue").setMaster("yarn-client")
+
+val sc=new SparkContext(conf)
+
+sc.getConf.getAll
+
+sc.getConf.getAll.foreach(println)
+
+
+RDD ->Resilinet Distibuted DataSets
+
+-->In-Memory
+-->Distributed
+-->Resilient
+
+===========================================
+
+val range= 1 to 100
+val list=range.toList
+  (OR)
+  val list=(1 to 100).toList
+
+  RDD is In-Memory distibuted List or Collection
+
+  List VS RDD
+    RDD: Reslient Distibted DataSets it is exetsion to List
+
+// Create RDD -validating files from file System
+hadoop fs -ls /public/retail_db/orders/
+
+
+ hadoop fs -tail /public/retail_db/orders/part-00000
+
+
+========================
+export SPARK_MAJOR_VERSION=2
+spark-shell --master yarn \
+  --conf spark.ui.port=12245 \
+  --num-executors 1 \
+  --executor-memory 512M
+
+val orders=sc.textFile("/public/retail_db/orders") 
+
+==================================================
+val productsRaw=scala.io.Source.fromFile("/data/retail_db/products/part-00000").getLines.toList
+
+val productRDD=sc.parallelize(productsRaw);
+
+==================================================
+
+val orderDF=spark.sqlContext.read.json("/public/retail_db_json/orders");
+ orderDF.show()
+ orderDF.show(false); (Full Info)
+ orderDF.select("order_customer_id","order_id");
+orderTwo.printSchema
+orderTwo.show(false)
+
+spark.sqlContext.load("/public/retail_db_json/orders","json")
+ val orderJson=spark.sqlContext.load("/public/retail_db_json/orders","json")
+
+ ======================================
+ Supported File Format 
+   orc
+   json
+   parquet
+   avro
+
+Row Level : map
+=====================================
+ val orders=sc.textFile("/public/retail_db/orders");
+ orders.first
+ 
+ val str=orders.first
+ 
+ Note: If we want Full Info 
+  str.split (Control Tab)
+  str.split(",")
+  
+  val sps=st.split(",")
+  
+  val orderId=sps(0).toInt
+   a(1).contains("2017")
+    date.substring(0,10)
+   date.replace('-' ,'/')
+   date.replace("07","July")
+   date.indexOf("2")
+   date.length
+
+   Row Level Operation :
+    map(func): Map as Func as input argument
+    filter : 
+
+
+    mapPartitions
+    mapPartitionsWithIndex(func)
+
+    map : Foreach input record there only one output recrod
+    flatMap: foreach input record there is one or more output records
+ val orders=sc.textFile("orders")
+scala> orders.first
+res27: String = 1,2013-07-25 00:00:00.0,11599,CLOSED
+val str=orders.first
+str.split(",")(1).subString(0,10).replace("-","").toInt
+def map[U](f: String => U)(implicit evidence$3: scala.reflect.ClassTag[U]): org.apache.spark.rdd.RDD[U]
+
+val ordersDates=orders.map((str:String)=>{
+str.split(",")(1).substring(0,10).replace("-","").toInt	
+})
+
+ordersDates.take(10).foreach(println)
+val ordersPairRDD=orders.map(order=>{
+val o=order.split(",")
+(o(0).toInt,o(1).substring(0,10).replace("-","").toInt
+})
+
+val ordersPairRDD=orders.map(order=>{
+val o=order.split(",")
+(o(0).toInt,o(1).substring(0,10).replace("-","").toInt,o(2))
+})
+
+val orderItemPairs=orders.map(orderItem=>{
+(orderItem.split(",")(1).toInt,orderItem)
+})
+
+
+val orderItemPairs=orders.map(orderItem=>{
+(orderItem.split(",")(1).toInt)
+})
+
+ordersDate.take(10).foreach(println)
+
+val list=List("Hello","How are you doing","Let us perfom word word")
+val l_rdd=sc.parallelize(list)
+ val l_flat=l_rdd.flatMap(ele=>ele.split(" "))
+ val wordcount=l_flatmap.map(word=>(word,"")).countByKey
+ val wordcount=l_flatmap.map(word=>(word,1))
+  val res=wordcount.countByKey
+
+ ===============================================
+   
+  val orders=sc.textFile("/public/retail_db/orders");
+  orders.take(10).foreach(println)
+   orders.filter(order=>order.split(",")(3)=="COMPLETE").take(10).foreach(println)
+
+ val s=orders.first
+s.contains("COMPLETE") || s.contains("CLOSED")
+s.split(",")(3)=="COMPLETE" || s.split(",")(3)=="CLOSED"
+(s.split(",")(3)=="COMPLETE" || s.split(",")(3)=="CLOSED") && (s.split(",")(1).contains("2013-07-25"))
+
+// Get all the orders from 2013-09 which are in closed or complete
+orders.map(order=>order.split(",")(3)).distinct
+orders.map(order=>order.split(",")(3)).distinct.collect.foreach(println
+     | )
+
+val orderFilter=orders.filter(order =>{
+val o=order.split(",")
+  (o(3)=="COMPLETE"||o(3)=="CLOSED" &&o(1).contains("2013-09"))
+  }
+ )    
+
+   
+ orderFilter.collect.foreach(println)
+
+ hadoop fs -getmerge /user/anjaiahspr/data /home/anjaiahspr/getmerge/records.txt
+ =====================================================================================
+ val orders=sc.textFile("/public/retail_db/orders");
+ val orders_item=sc.textFile("/public/retail_db/order_items");
+
+val orderMap=orders.map(order=>(order.split(",")(0).toInt,
+order.split(",")(1).substring(0,10)))
+
+val orderItemsMap=orders_item.map(orderItem=>(orderItem.split(",")(0).toInt,
+orderItem.split(",")(4).toFloat
+))
+   (OR)
+ val orderItemsMaps=orders_item.map(orderItem=>{
+ val oi=orderItem.split(",")
+ (oi(1).toInt,oi(4).toFloat)
+ })  
+
+ val ordersJoin=orderMap.join(orderItemsMaps)
+val orderItemsMap=orders_item.map(orderItem=>{
+ val oi=orderItem.split(",")
+ () 
+
+})
+
+
+// Get all the orders which do not have corresponding entires  in order items
+ val orders=sc.textFile("/public/retail_db/orders");
+ val orders_item=sc.textFile("/public/retail_db/order_items");
+
+val orderMap=orders.map(order=>(order.split(",")(0).toInt,
+order))
+
+val orderItemsMap=orders_item.map(orderItem=>(orderItem.split(",")(0).toInt,
+orderItem.split(",")(4).toFloat
+))
+   (OR)
+ val orderItemsMaps=orders_item.map(orderItem=>{
+ val oi=orderItem.split(",")
+ (oi(1).toInt,orderItem)
+ })  
+
+val ordersLeftOuterJoin=ordersMap.leftOuterJoin(orderItemsMaps)
+val t=ordersLeftOuterJoin.first
+t._1
+t._2
+t._2._2
+val orderLeftOuterJoinFilter=ordersLeftOuterJoin.filter(order=>order._2._2==None)
+
+val orderWithNoOrderItem=orderLeftOuterJoinFilter.map(order=>order._2._1)
+
+
+val orderRightOuterJoin=orderItemsMaps.rightOuterJoin(orderMap)
+val ordersWithNoOrderItem=orderRightOuterJoin.filter(order=>order._2._1==None).map(order=>order._2._2)
+
+ordersWithNoOrderItem.take(10).foreach(println)
+
+
+  Aggregation  ::=====>>>
+val orders=sc.textFile("/public/retail_db/orders");
+val orderMap=orders.map(order=>(order.split(",")(3),"")).countByKey.foreach(println)
+ 
+
+
+
+
+
+   Filter : filter
+
+   union
+   intersection
+
+
+export SPARK_MAJOR_VERSION=2
+spark-shell --master yarn \
+  --conf spark.ui.port=12245 \
+  --num-executors 1 \
+  --executor-memory 512M \
+  --class wordCount.scala 10 10
+
+
+orders.map(order=>(order.split(",")(3),"")).countByKey
+
+orders.map(order=>(order.split(",")(3),"")).countByKey.foreach(println)
+orders.map(order=>(order.split(",")(2),"")).countByKey.foreach(println)
+foreach work only data strucures array,list,map
+won't work for RDD.
+
+reduce can't perfom  by key 
+
+
+val orderItems=sc.textFile("/public/retail_db/order_items")
+
+val orderItemRevenue=orderItems.map(orderItem=>orderItem.split(",")(4).toFloat)
+
+orderItemRevenue.reduce((total,revenue)=>total+revenue)
+
+orderItemRevenue.reduce((total ,revenue)=>{
+ if(total<revenue) revenue else total
+})
+
+(OR)
+val orderItemsMaxRevenue = orderItemsRevenue.reduce((max, revenue) => {
+  if(max < revenue) revenue else max
+})
+
+groupByKey doesn't use combine
+reudceBy And aggregate ==Use Combiner
+
+Aggregration ---->groupByKey
+
+reduceBy --->Cou
+
+groupByKey ---> sum(1 to 100)  ==> 1+2+3....100
+
+reduceByKey --->sum(sum(1,50),sum(51,100))
+
+
+groupByKey  ==>if you are groupping in order an aggregation(sum,avg) over
+each key,using reduceByKey or aggrgateByKey will yield much better perfomance.
+
+reduceByKey
+aggregateByKey
+
+
+
+
+
+orderItems.map(oi => oi.split(",")(4).toFloat)
+
+
+
+spark-shell --master yarn --conf spark.ui.port=12245
+
+
+
+
+
+
+scala> :history
+ 25  ;
+ 26  val productsRaw=scala.io.Source.fromFile("/data/retail_db/products/part-0000").getLines.toList
+ 27  val productsRaw=scala.io.Source.fromFile("/data/retail_db/products/part-00000").getLines.toList
+ 28  val productRDD=sc.parallelize(productsRaw);
+ 29  productRDD.foreach(println);
+ 30  productRDD.foreach{println}
+ 31  val lrdd=sc.parallelize(list);
+ 32  lrdd.collect
+ 33  productRDD.collect
+ 34  spark.sqlContext.read.json("/public/retail_db_json/orders");
+ 35  val orderDF=spark.sqlContext.read.json("/public/retail_db_json/orders");
+ 36  orderDF.show();
+ 37  orderDF.show(false);
+ 38  orderDF.show
+ 39  orderDF.printSchema
+ 40  orderDF.select("order_customer_id","order_id");
+ 41  val orderTwo= orderDF.select("order_customer_id","order_id");
+ 42  orderTwo.printSchema
+ 43  orderTwo.show(false)
+ 44  :history
+
