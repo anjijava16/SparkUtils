@@ -75,10 +75,26 @@ df2.write.jdbc(url,"emp_unicode3",prop);
 
 df2.write.mode("append").format("jdbc").jdbc(url,"emp_unicode4",prop);
 
+############################################################################################
 
 ## Connecting to MYSQL 
 mysql -u root -p root
 select * from emp_unicode4;
+Desc emp_unicode4
+CREATE TABLE `emp_unicode4` (
+	`id` VARCHAR(10) NULL DEFAULT NULL,
+	`emp_unicode_var` VARCHAR(180) NULL DEFAULT NULL,
+	`email` VARCHAR(100) NULL DEFAULT NULL,
+	`emp_unicode_str` VARCHAR(100) NULL DEFAULT NULL,
+	`emp_sal` VARCHAR(100) NULL DEFAULT NULL,
+	`emp_unicode_3` VARCHAR(100) NULL DEFAULT NULL,
+	`emp_unicode_4` VARCHAR(100) NULL DEFAULT NULL
+)
+COLLATE='latin1_swedish_ci'
+ENGINE=MyISAM
+;
+
+############################################################################################
 mysql> select * from emp_unicode4
 +--------------------+---------------------------------------+--------------------+-----------------------------------------+--------------------+---------------------------------------+---------------------------------------+
 | encode(_c0, UTF-8) | encode(_c1, UTF-8)                    | encode(_c2, UTF-8) | encode(_c3, UTF-8)                      | encode(_c4, UTF-8) | encode(_c5, UTF-8)                    | encode(_c6, UTF-8)                    |
