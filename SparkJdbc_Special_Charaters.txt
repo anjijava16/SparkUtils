@@ -1,0 +1,76 @@
+# ==========================================================================
+
+hadoop@hadoop:~/Desktop/SpecialCharater$ more chines.csv 
+1|ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ|aj@gmail.com|ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ|100|ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ|ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ
+2|蜄蜄蜄蜄蜄|b@gmail.com|蜄蜄蜄蜄|200|蜄蜄蜄蜄|蜄蜄蜄蜄
+3|ééé € ’æ üœ‘æô×|ks@gmail.com|ééé€’æ üœ‘æô×|300|ééé€’æ üœ‘æô×|ééé€’æ üœ‘æô×
+4|ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ|bj@gmail.com|ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ|700|ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ|ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ
+5|ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ|Cj@gmail.com|ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ|500|ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ|ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ
+6|ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ|dj@gmail.com|ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ|600|ðszʃʒʂʐçʝxɣχʁħʕʜ|ðszʃʒʂʐçʝxɣχʁħʕʜ
+7|漢字漢字漢字|kks@gmail.com|漢字漢字漢字漢字漢字|700|漢字漢字漢字漢字漢字|漢字漢字漢字漢字漢字
+8|汉字/漢字汉字/漢字|kks@gmailc.com|汉字/漢字汉字/漢字汉字/漢字|800|字/漢字汉字/漢字|字/漢字汉字/漢字
+hadoop@hadoop:~/Desktop/SpecialCharater$ 
+
+
+# ===========================================================================
+
+
+val commits = spark.read. option("header", "true").option("delimiter", "|").csv("data/spark-commits/sample.csv")
+
+
+cala> val df1=spark.read.option("delimiter", "|").csv("/user/anjaiahspr/chines.csv")
+df1: org.apache.spark.sql.DataFrame = [_c0: string, _c1: string ... 5 more fields]
+
+scala> df1.show(false)
++---+---------------------+--------------+---------------------+---+---------------------+---------------------+
+|_c0|_c1                  |_c2           |_c3                  |_c4|_c5                  |_c6                  |
++---+---------------------+--------------+---------------------+---+---------------------+---------------------+
+|1  |ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ|aj@gmail.com  |ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ|100|ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ|ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ|
+|2  |蜄蜄蜄蜄蜄                |b@gmail.com   |蜄蜄蜄蜄                 |200|蜄蜄蜄蜄                 |蜄蜄蜄蜄                 |
+|3  |ééé € ’æ üœ‘æô×      |ks@gmail.com  |ééé€’æ üœ‘æô×        |300|ééé€’æ üœ‘æô×        |ééé€’æ üœ‘æô×        |
+|4  |ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ|bj@gmail.com  |ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ|700|ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ|ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ|
+|5  |ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ|Cj@gmail.com  |ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ|500|ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ|ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ|
+|6  |ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ|dj@gmail.com  |ɸβfvθðszʃʒʂʐçʝxɣχʁħʕʜ|600|ðszʃʒʂʐçʝxɣχʁħʕʜ     |ðszʃʒʂʐçʝxɣχʁħʕʜ     |
+|7  |漢字漢字漢字               |kks@gmail.com |漢字漢字漢字漢字漢字           |700|漢字漢字漢字漢字漢字           |漢字漢字漢字漢字漢字           |
+|8  |汉字/漢字汉字/漢字           |kks@gmailc.com|汉字/漢字汉字/漢字汉字/漢字      |800|字/漢字汉字/漢字            |字/漢字汉字/漢字            |
++---+---------------------+--------------+---------------------+---+---------------------+---------------------+
+
+
+scala> 
+
+
+val url="jdbc:mysql://localhost:3306/iwsdb"
+
+val prop = new java.util.Properties
+
+prop.setProperty("user","root")
+
+prop.setProperty("password","root")
+
+prop.setProperty("driver","com.mysql.jdbc.Driver")
+
+prop.setProperty("truncate","true")
+
+val employee = sqlContext.read.jdbc(url,"employee",prop)
+
+
+val df1=spark.read.option("delimiter", "|").csv("/user/anjaiahspr/chines.csv")
+1558  df1.show(false)
+1559  val url="jdbc:mysql://localhost:3306/iwsdb"
+1560  val prop = new java.util.Properties
+1561  prop.setProperty("user","root")
+1562  prop.setProperty("password","root")
+1563  prop.setProperty("driver","com.mysql.jdbc.Driver")
+1564  df1.write.jdbc(url,"emp_unicode",prop);
+1565  df1.write.jdbc(url,"emp_unicode1",prop);
+1566  :history
+
+org.apache.spark.sql.functions
+import org.apache.spark.sql.{SQLContext, SaveMode}
+
+## Configuration Info 
+val ps=df1.columns.map(s=>functions.encode( df1(s),"UTF-8"))
+val df2=df1.select(ps:-*)
+df2.write.jdbc(url,"emp_unicode3",prop);
+
+df2.write.mode("append").format("jdbc").jdbc(url,"emp_unicode4",prop);
