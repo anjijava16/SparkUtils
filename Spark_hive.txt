@@ -1,0 +1,54 @@
+===========================================================
+import org.apache.spark.sql.Row
+import org.apache.spark.sql.SparkSession
+val hiveContext=SparkSession.builder().appName("Spark Hive Example").enableHiveSupport().getOrCreate()
+===========================================================
+scala> hiveContext.
+baseRelationToDataFrame   close   createDataFrame   emptyDataFrame   experimental   listenerManager   range   readStream     sql          stop      table   udf       
+catalog                   conf    createDataset     emptyDataset     implicits      newSession        read    sparkContext   sqlContext   streams   time    version   
+===========================================================
+#hiveContext.sql("show databases").show(false);
+hiveContext.sql("use iwsdb");
+val df1=hiveContext.sql("select * from bucketed_user");
+===========================================================
+
+scala> df1.explain
+== Physical Plan ==
+HiveTableScan [id#23, name#24], MetastoreRelation iwsdb, bucketed_user
+
+===========================================================
+scala> df1.queryExecution
+res6: org.apache.spark.sql.execution.QueryExecution =
+== Parsed Logical Plan ==
+'Project [*]
++- 'UnresolvedRelation `bucketed_user`
+
+== Analyzed Logical Plan ==
+id: int, name: string
+Project [id#13, name#14]
++- MetastoreRelation iwsdb, bucketed_user
+
+== Optimized Logical Plan ==
+MetastoreRelation iwsdb, bucketed_user
+
+== Physical Plan ==
+HiveTableScan [id#13, name#14], MetastoreRelation iwsdb, bucketed_user
+
+scala> 
+===========================================================
+scala> df1.
+agg          collect                   cube             explode            head          limit            randomSplit         schema                 stat              toString            withWatermark   
+alias        collectAsList             describe         filter             inputFiles    map              randomSplitAsList   select                 storageLevel      transform           write           
+apply        columns                   distinct         first              intersect     mapPartitions    rdd                 selectExpr             take              union               writeStream     
+as           count                     drop             flatMap            isLocal       na               reduce              show                   takeAsList        unionAll                            
+cache        createGlobalTempView      dropDuplicates   foreach            isStreaming   orderBy          registerTempTable   sort                   toDF              unpersist                           
+checkpoint   createOrReplaceTempView   dtypes           foreachPartition   javaRDD       persist          repartition         sortWithinPartitions   toJSON            where                               
+coalesce     createTempView            except           groupBy            join          printSchema      rollup              sparkSession           toJavaRDD         withColumn                          
+col          crossJoin                 explain          groupByKey         joinWith      queryExecution   sample              sqlContext             toLocalIterator   withColumnRenamed                   
+
+===========================================================
+
+df1.inputFiles
+
+scala> df1.inputFiles
+res10: Array[String] = Array(hdfs://localhost:8020/home/hadoop/spark/warehouse/iwsdb.db/bucketed_user)
