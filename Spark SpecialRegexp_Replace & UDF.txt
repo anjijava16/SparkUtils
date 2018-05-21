@@ -1,0 +1,98 @@
+https://github.com/apache/spark/blob/master/sql/core/src/main/scala/org/apache/spark/sql/functions.scala
+
+http://spark.apache.org/docs/1.5.1/api/scala/index.html#org.apache.spark.sql.functions$
+
+https://medium.com/@mrpowers/the-different-type-of-spark-functions-custom-transformations-column-functions-udfs-bf556c9d0ce7
+
+https://stackoverflow.com/questions/17462802/how-to-find-special-characters-in-db2
+
+http://xinhstechblog.blogspot.in/2016/07/overview-of-spark-20-dataset-dataframe.html#org
+
+
+Special.csv::==>
+=======================================================================
+10|character ï¿½ |I have a string that contains a character ï¿½ I haven't been able to replace it correctly
+20|2character ï¿½ |I have a string that contains a character ï¿½ I haven't been able to replace it correctly
+30|3character ï¿½ |a character ï¿½ I haven't been able to replace it correctly
+40|4character ï¿½ |character ï¿½ I haven't been able to replace it correctly
+================================================================================
+
+import org.apache.spark.sql.functions
+val df1=spark.read.option("delimiter", "|").csv("/user/anjaiahspr/Special/Special.csv");
+df1.createOrReplaceTempView("web");
+val df2=spark.sql("select _c0 as id,_c1 as name, _c2 as des from web");
+df2.createOrReplaceTempView("process");
+val ps=df2.columns.map(s=>functions.regexp_replace( df2(s),"ï¿½","Raj"))
+val result=df2.select(ps:_*)
+result.show(false)
+
+
+val spe="[ï¿½,]+";
+
+val ps=df2.columns.map(s=>functions.regexp_replace( df2(s),"[ï¿½,]+","Raj"))
+val result=df2.select(ps:_*)
+result.show(false)
+
+=====================================================
+df.withColumn("id" , df("id") + 2).show()
+
+
+val specialUDF=(inputDate:String)=>{
+var res=inputDate.replaceAll("ï¿½", "");
+res;
+}
+
+spark.sqlContext.udf.register("specialUDF", specialUDF);
+
+spark.sql("select id,name,specialUDF(name) from web").show(false)
+
+
+==========================================
+import org.apache.spark.sql.functions
+val df1=spark.read.option("delimiter", "|").csv("/user/anjaiahspr/Special/Special.csv");
+df1.createOrReplaceTempView("web");
+val df2=spark.sql("select _c0 as id,_c1 as name, _c2 as des from web");
+df2.createOrReplaceTempView("process");
+val ps=df2.columns.map(s=>functions.regexp_replace( df2(s),"ï¿½","Raj"))
+val result=df2.select(ps:_*)
+result.show(false)
+
+val specialUDF=(inputDate:String)=>{
+var res=inputDate.replaceAll("ï¿½", "");
+res;
+}
+
+val specialUDF=(inputDate : Column)=>{
+var res=inputDate.replaceAll("ï¿½", "");
+res;
+}
+
+
+val columnsTomap = df2.select("rbc", "cad", "rbc", "pe", "ane").columns
+
+var tempdf = df2
+
+val ds= df2.map(column => {df2 = df2.withColumn(column, specialUDF(df2(column)))})
+val ds= df2.map(column => {mydf = df2.withColumn(column, specialUDF(df2(column)))})
+
+tempdf.show(false)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
