@@ -1,0 +1,40 @@
+val df = List(
+  (1,"joao",1000),
+  (2,"gabriel",2000),
+  (3,"bbabriel",3000),
+  (4,"hhbriel",4000),
+  (5,"KKbriel",5000)
+).toDF("id","name","sal")
+
+
+StructType: Object define the schema of spark dataframe.
+            StructType objects contains list of StructFields .
+StructFields: this object defines the name,type and nullable flag for each column in DataFrame .
+
+val data = Seq(
+  Row(1, "a"),
+  Row(5, "z")
+)
+
+val schema=StructType(List(StructField("num",IntegerType,true),StructField("letter",StringType,true)))
+val df=spark.createDataFrame(spark.sparkContext.parallelize(data),schema)
+
+============================== Examples ====================================
+val schema = StructType(Array(StructField("cid",IntegerType,true), StructField("name",StringType,true), StructField("loc",StringType,true), StructField("pincode",IntegerType,true)))
+
+val contact = spark.read.csv("file:///home/iws/spark/input/contact.csv")
+
+val rdd = contact.map(c => (c(0).toString.toInt, c(1).toString, c(2).toString, c(3).toString.toInt)).rdd
+
+ val cdf1 = spark.createDataFrame(rdd, schema)
+ 
+ Ex2:
+ val df=spark.read.option("delimiter", "|").csv("/user/anjaiahspr/Special/Special.csv");
+ val specialSchema=StructType(Array(StructField("id",IntegerType,true),StructField("name",StringType,true),StructField("desc",StringType,true)))
+
+val rdd=df.map(c=>(c(0).toString.toInt,c(1).toString,c(2).toString)).rdd
+
+import org.apache.spark.sql.types.IntegerType
+import org.apache.spark.sql.types.StringType
+import org.apache.spark.sql.types.StructType
+import org.apache.spark.sql.types.StructField
